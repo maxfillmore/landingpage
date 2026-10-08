@@ -1,0 +1,6 @@
+{
+  "redirects": [
+    { "source": "/", "destination": "/opt-in", "permanent": false }
+  ],
+  "trailingSlash": false
+}
