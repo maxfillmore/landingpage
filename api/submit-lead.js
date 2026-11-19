@@ -3,6 +3,7 @@
 
 const GOALS = ['More Patients', 'Higher Quality Patients', 'More Cosmetic Patients', 'More General Patients', 'More recognizable brand'];
 const REVENUES = ['Under 50k', '50-150k', '150k-250k', '250k+'];
+const TIMES = ['ASAP', 'Within the next month', 'In 1-2 months', '3+ months'];
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
 // Basic in-memory rate limit: 5 submissions per IP per 10 minutes (per warm instance).
@@ -28,6 +29,7 @@ function validate(body) {
     phone: str(body.phone, 30),
     social_media_goals: str(body.social_media_goals, 300),
     monthly_revenue: str(body.monthly_revenue, 30),
+    implementation_timeline: str(body.implementation_timeline, 40),
     page_url: str(body.page_url, 500),
   };
   const errors = [];
@@ -39,7 +41,8 @@ function validate(body) {
   const goals = lead.social_media_goals.split(',').map(g => g.trim()).filter(Boolean);
   if (!goals.length || goals.some(g => !GOALS.includes(g))) errors.push('social_media_goals is invalid');
   if (!REVENUES.includes(lead.monthly_revenue)) errors.push('monthly_revenue is invalid');
-  lead.qualified = lead.monthly_revenue && lead.monthly_revenue !== 'Under 50k' ? 'yes' : 'no';
+  if (!TIMES.includes(lead.implementation_timeline)) errors.push('implementation_timeline is invalid');
+  lead.qualified = lead.monthly_revenue && lead.monthly_revenue !== 'Under 50k' && lead.implementation_timeline !== '3+ months' ? 'yes' : 'no';
   lead.submitted_at = new Date().toISOString();
   return { lead, errors };
 }
